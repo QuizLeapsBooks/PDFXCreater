@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDFXCreater</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.5.12/dist/cropper.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/cropperjs@1.5.12/dist/cropper.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .thumbnail:hover .delete-btn { opacity: 1; }
+        .delete-btn { opacity: 0; transition: opacity 0.3s; }
+        #plus-btn:hover { transform: scale(1.1); }
+        #done-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        #drop-zone { border: 2px dashed #3b82f6; }
+        #drop-zone.dragover { background: #bfdbfe; }
+        #preview-modal img { max-height: 80vh; }
+        #progress-bar { transition: width 0.3s ease; }
+        .loading-spinner { border: 4px solid #f3f3f3; border-top: 4px solid #3b82f6; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center font-sans">
+    <header class="w-full bg-blue-600 text-white text-center py-4">
+        <h1 class="text-2xl font-bold">PDFXCreater</h1>
+    </header>
+    <main class="flex-1 flex flex-col items-center w-full max-w-4xl p-4">
+        <div id="drop-zone" class="w-full h-32 bg-white rounded-lg flex items-center justify-center mb-6 text-gray-500">
+            Drag & Drop Images Here or Click to Add
+        </div>
+        <input type="file" id="image-input" accept="image/*" multiple class="hidden">
+        <div id="thumbnails" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 w-full"></div>
+        <div class="mt-6 w-full flex items-center gap-4">
+            <input id="pdf-name" type="text" placeholder="Enter PDF name" class="flex-1 p-2 rounded-lg border">
+            <button id="done-btn" class="bg-green-500 text-white py-2 px-6 rounded-lg shadow-lg disabled:opacity-50" disabled>
+                Done
+            </button>
+        </div>
+        <div id="loading" class="hidden mt-4 flex items-center gap-2 text-blue-600">
+            <div class="loading-spinner"></div> Generating PDF...
+        </div>
+        <div id="progress-container" class="hidden mt-4 w-full bg-gray-200 rounded-full h-4">
+            <div id="progress-bar" class="bg-blue-600 h-full rounded-full" style="width: 0%"></div>
+        </div>
+    </main>
+    <div id="preview-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white p-4 rounded-lg max-w-4xl w-full">
+            <h2 class="text-lg font-bold mb-2">Image Preview</h2>
+            <img id="modal-image" class="w-full rounded">
+            <div class="mt-4 flex gap-2">
+                <button id="crop-btn" class="bg-blue-500 text-white py-1 px-4 rounded">Crop</button>
+                <button id="rotate-btn" class="bg-blue-500 text-white py-1 px-4 rounded">Rotate</button>
+                <button id="close-modal" class="bg-gray-500 text-white py-1 px-4 rounded">Close</button>
+            </div>
+        </div>
+    </div>
+    <div id="pdf-preview-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white p-4 rounded-lg max-w-4xl w-full">
+            <h2 class="text-lg font-bold mb-2">PDF Preview</h2>
+            <iframe id="pdf-preview" class="w-full h-96"></iframe>
+            <div class="mt-4 flex gap-2">
+                <button id="download-btn" class="bg-green-500 text-white py-1 px-4 rounded">Download</button>
+                <button id="close-pdf-modal" class="bg-gray-500 text-white py-1 px-4 rounded">Close</button>
+            </div>
+        </div>
+    </div>
+    <script src="features.js"></script>
+</body>
+</html>
